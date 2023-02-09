@@ -6,14 +6,9 @@ module.exports = {
     }
   },
   networks: {
-    loc_cryptocar_cryptocar: {
-      network_id: "*",
-      port: 7071,
-      host: "127.0.0.1"
-    },
     loc_development_development: {
       network_id: "*",
-      port: 7071,
+      port: 7545,
       host: "127.0.0.1"
     }
   }

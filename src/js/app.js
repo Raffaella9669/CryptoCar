@@ -16,6 +16,7 @@ App = {
         autoTemplate.find('.auto-price').text(data[i].prezzo);
         autoTemplate.find('.auto-mot').text(data[i].motorizzazione);
         autoTemplate.find('.btn-adopt').attr('data-id', data[i].id);
+        autoTemplate.find('.btn').attr('data-id', data[i].id);
         autoRow.append(autoTemplate.html());
       }
     });

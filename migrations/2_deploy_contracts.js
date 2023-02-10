@@ -1,6 +1,10 @@
 var Ledger = artifacts.require("CarLedger");
 var Vendor = artifacts.require("CryptoCar");
 
+const fs = require('fs');
+let rawdata = fs.readFileSync('cars.json');
+var carsData = JSON.parse(rawdata);
+
 module.exports = async function(deployer, network , accounts) {
 
 	//deployer.deploy(Car);
@@ -25,11 +29,22 @@ module.exports = async function(deployer, network , accounts) {
 
 		console.log("mech joined : "+mechanic);
 
+	}).then(async function(){
+		
+		console.log("proviamo inserimento : "+ carsData); 
+
+		
+		let instanceVendor =await Vendor.deployed();   
+
+		await carsData.forEach( element => {
+            
+            console.log(element.modello + "  ");
+            let a = instanceVendor.addCar(element.modello, element.name, element.picture, element.age_production, element.allestimento, element.motorizzazione, element.kw, element.optional, element.url, parseInt(element.prezzo) ,{from: accounts[0]});    
+        });
+		
+
 	});
 
 
 	
 };
-
-
-//var json = $.getJSON("pets.json");

@@ -24,11 +24,16 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
     }
 
     struct Info {
+        string name; 
+        string age_production; 
+		string model;
+		string staging; 
+		string motor;
+		string power;  
         Service[] services; 
         address[] history;
         string vin; 
         string plate;
-        string model;
         string optionals; 
         string url_info; 
         bool isSet; 
@@ -74,11 +79,16 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
 
 
 
-    function createCar(address to , string memory _model, string memory _url_info, string memory _optionals  ) public onlyRole(DEALER_ROLE) returns (uint256) {
+    function createCar(address to ,string memory _name,string memory _age_production, string memory _model,string memory _staging, string memory _motor, string memory _power, string memory _url_info, string memory _optionals  ) public onlyRole(DEALER_ROLE) returns (uint256) {
 
         uint256 tokenId = _tokenIdCounter.current(); 
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
+        ledger[tokenId].power = _power;
+        ledger[tokenId].motor = _motor;
+        ledger[tokenId].staging = _staging;  
+        ledger[tokenId].age_production = _age_production; 
+        ledger[tokenId].name = _name; 
         ledger[tokenId].vin = Strings.toString(block.timestamp%19);
         ledger[tokenId].plate = Strings.toString((block.timestamp+200)%8); 
         ledger[tokenId].model = _model; 

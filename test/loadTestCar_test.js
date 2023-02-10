@@ -1,38 +1,28 @@
-const CryptoCar = artifacts.require("Adoption");
+const CryptoCar = artifacts.require("CryptoCar");
 
 const fs = require('fs');
 
-let rawdata = fs.readFileSync('pets.json');
+let rawdata = fs.readFileSync('pets2.json');
 let carsData = JSON.parse(rawdata);
+var instanceVendor; 
+var expectedList; 
 
 contract("CryptoCar", (accounts) => {
   
-  before(async () => {
-      adoption = await CryptoCar.deployed();
-  });
-
-  describe("Loading some car into a list of CryptoCar", async () => {
-    before("adopt a pet using accounts[0]", async () => {
-      
-        await adoption.adopt(8, { from: accounts[0] });
-      expectedAdopter = accounts[0];
-    });
-  
-});
-});
-
-let insanceVendor = await Vendor.deployed().then(async function(){
-
-    console.log(carsData.lenght); 
-    carsData.forEach(async element => {
+    it("Try to load car on contract", async () =>{
         
-        //let res = await instanceVendor.addCar(element.modello, element.name, element.picture, element.age_production, element.allestimento, element.motorizzazione, element.kw, element.optionals, element.url, element.price
-            //,{from:account});
-        //console.log("res----> "+res);. 
-        console.log("Inserted :"+element); 
+        const cryptoInstance = await CryptoCar.deployed();
 
-    });
+        await carsData.forEach(async element => {
+            
+            console.log(element.picture + "  "+ a);
+            //let a = await cryptoInstance.addCar(element.modello, element.name, element.picture, element.age_production, element.allestimento, element.motorizzazione, element.kw, element.optional, element.url, parseInt(element.prezzo) ,{from: accounts[0]}); 
+             
+        });
+        
+        let b = cryptoInstance.getCarList({from: accounts[0]}); 
+        console.log(b); 
+        }); 
     
 
-
-}); 
+});

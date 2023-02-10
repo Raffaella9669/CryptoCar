@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 interface ICarLedger {
 
-	function createCar(address to , string memory _model, string memory _url_info, string memory _optionals  ) external returns (uint256); 
+	function createCar(address to ,string memory _name,string memory _age_production, string memory _model,string memory _staging, string memory _motor, string memory _power, string memory _url_info, string memory _optionals  )  external returns (uint256); 
 
 	function addDealer(address dealer) external;
 
@@ -25,7 +25,7 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
 
 	event Log(string message);
 	event CarCreation( string message, uint256 tokenId, address to); 
-	event CarAdd( string message, uint256 id, Info info); 
+	event CarAdd( string message, uint256 id, string model); 
 
 	bytes32 public constant DEALER_ROLE = keccak256("DEALER_ROLE");
     bytes32 public constant MEC_ROLE = keccak256("MEC_ROLE");
@@ -97,9 +97,20 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
 	function addCar(string memory model, string memory name, string memory picture, string memory age_prod, string memory staging, string memory motor, string memory power, string memory optionals, string memory url_info, uint256 price) external onlyRole(DEALER_ROLE) returns (uint256) {
 
 		uint256 Id = _tokenIdCounter.current(); 
-		Info memory _newInfo = Info(name,picture,age_prod ,model, staging, motor, power, optionals, url_info, false, true, price, Id);
-		list[Id] = _newInfo; 
-		emit CarAdd("New car joined to the list", Id, list[Id]);
+		list[Id].name = name; 
+		list[Id].picture = picture;
+		list[Id].age_production = age_prod; 
+		list[Id].model = model;
+		list[Id].staging = staging;
+		list[Id].motor = motor;
+		list[Id].power = power;
+		list[Id].optionals = optionals;
+		list[Id].url_info = url_info;
+		list[Id].isSold = false;
+		list[Id].isSet = true;
+		list[Id].price = price; 
+		emit CarAdd("New car joined to the list", Id, list[Id].model);
+		_tokenIdCounter.increment();
 		return Id; 
 	}    
  
@@ -108,9 +119,8 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
 
 		require(list[idCar].isSet == true , "The car doesn't exists");
 		require(list[idCar].isSold == false ,"Already sold");
-		require(msg.value >= list[idCar].price , "Insufficient funds" ); 
-		
-		try carLedger.createCar(msg.sender, list[idCar].model, list[idCar].url_info, list[idCar].optionals) returns(uint256 carId)
+		require(msg.value == list[idCar].price , "Insufficient or not correct funds" ); 
+		try carLedger.createCar(msg.sender,list[idCar].name,list[idCar].age_production, list[idCar].model, list[idCar].staging, list[idCar].motor,list[idCar].power, list[idCar].url_info, list[idCar].optionals) returns(uint256 carId)
 		{
 			list[idCar].isSold = true;
 			list[idCar].tokenId = carId;

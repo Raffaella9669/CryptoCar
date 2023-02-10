@@ -4,7 +4,7 @@ App = {
 
   init: async function() {
     // Load .
-    $.getJSON('../pets.json', function(data) {
+    $.getJSON('../cars.json', function(data) {
       var autoRow = $('#autoRow');
       var autoTemplate = $('#autoTemplate');
 

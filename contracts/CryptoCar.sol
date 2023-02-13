@@ -4,15 +4,16 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 
 interface ICarLedger {
 
-	function createCar(address to ,string memory _name,string memory _age_production, string memory _model,string memory _staging, string memory _motor, string memory _power, string memory _url_info, string memory _optionals  )  external returns (uint256); 
+	function createCar(address to ,string memory _name,string memory _age_production, string memory _model,string memory _staging, string memory _motor, string memory _power, string memory _url_info, string memory _optionals , string memory picture  )  external returns (uint256); 
 
 	function addDealer(address dealer) external;
 
-	function addService(address client, uint256 tokenId, uint32 _km, string memory _operation, string memory _office) external;
+	function addService( uint256 tokenId, uint32 _km, string memory _operation, string memory _office) external;
 
 	function addStation(address serv) external;  
 
@@ -24,8 +25,8 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
     Counters.Counter private _tokenIdCounter;
 
 	event Log(string message);
-	event CarCreation( string message, uint256 tokenId, address to); 
-	event CarAdd( string message, uint256 id, string model); 
+	event CarCreation( string message, string tokenId, address to); 
+	event CarAdd( string message, string id, string model); 
 
 	bytes32 public constant DEALER_ROLE = keccak256("DEALER_ROLE");
     bytes32 public constant MEC_ROLE = keccak256("MEC_ROLE");
@@ -66,9 +67,9 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
         _grantRole(MEC_ROLE, mec);
     }
 
-	function insertServiceCustomer(address client, uint256 tokenId, uint32 _km, string memory _operation) public onlyRole(MEC_ROLE) returns (bool)  {
+	function insertServiceCustomer(uint256 tokenId, uint32 _km, string memory _operation) public onlyRole(MEC_ROLE) returns (bool)  {
 
-		try	carLedger.addService(client, tokenId, _km, _operation, "CryptoCar")
+		try	carLedger.addService(tokenId, _km, _operation, "CryptoCar")
 		{
 			return true; 
 		
@@ -87,6 +88,7 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
 			if(list[i].isSet == true)
 			{	
 				cars[j] = list[i];
+				cars[j].tokenId = i; 
 				j++; 
 			}
     }
@@ -109,22 +111,22 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
 		list[Id].isSold = false;
 		list[Id].isSet = true;
 		list[Id].price = price; 
-		emit CarAdd("New car joined to the list", Id, list[Id].model);
+		emit CarAdd("New car joined to the list", Strings.toString(Id) , list[Id].model);
 		_tokenIdCounter.increment();
 		return Id; 
 	}    
  
 
-	function buyCar( uint256 idCar ) public payable returns (uint)  {
+	function buyCar( uint256 idCar ) public payable returns (uint256)  {
 
 		require(list[idCar].isSet == true , "The car doesn't exists");
 		require(list[idCar].isSold == false ,"Already sold");
 		require(msg.value == list[idCar].price , "Insufficient or not correct funds" ); 
-		try carLedger.createCar(msg.sender,list[idCar].name,list[idCar].age_production, list[idCar].model, list[idCar].staging, list[idCar].motor,list[idCar].power, list[idCar].url_info, list[idCar].optionals) returns(uint256 carId)
+		try carLedger.createCar(msg.sender,list[idCar].name,list[idCar].age_production, list[idCar].model, list[idCar].staging, list[idCar].motor,list[idCar].power, list[idCar].url_info, list[idCar].optionals, list[idCar].picture ) returns(uint256 carId)
 		{
 			list[idCar].isSold = true;
 			list[idCar].tokenId = carId;
-			emit CarCreation("Car created", carId, msg.sender);
+			emit CarCreation("Car created", Strings.toString(carId) , msg.sender);
 			return carId;
 
 		}catch

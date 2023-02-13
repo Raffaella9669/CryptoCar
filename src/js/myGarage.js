@@ -1,74 +1,86 @@
-var carsLoaded; 
-
-App = {
+ 
+NewApp = {
     web3Provider: null,
     contracts: {},
     
   
     init: async function() {
   
-      return await App.initWeb3();
+      return await NewApp.initWeb3();
     },
   
     initWeb3: async function() {
       
-          // Modern dapp browsers...
+          // Modern dNewapp browsers...
       if (window.ethereum) {
-        App.web3Provider = window.ethereum;
+        NewApp.web3Provider = window.ethereum;
         try {
           // Request account access
           await window.ethereum.enable();
-        
+           
         } catch (error) {
           // User denied account access...
           console.error("User denied account access")
         }
       }
-      // Legacy dapp browsers...
+      // Legacy dNewapp browsers...
       else if (window.web3) {
-        App.web3Provider = window.web3.currentProvider;
+        NewApp.web3Provider = window.web3.currentProvider;
       }
       // If no injected web3 instance is detected, fall back to Ganache
       else {
-        App.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
+        NewApp.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
       }
       
-      web3 = new Web3(App.web3Provider);
+      web3 = new Web3(NewApp.web3Provider);
   
   
-      return App.initContract();
+      return NewApp.initContract();
     },
   
     initContract: function() {
       
-      $.getJSON('CryptoCar.json', function(data) {
+
+      $.getJSON('CarLedger.json', function(data) {
         // Get the necessary contract artifact file and instantiate it with @truffle/contract
-        var CryptoCarArtifacts = data;
-        App.contracts.CryptoCar = TruffleContract(CryptoCarArtifacts);
+        var LedgerArtifacts = data;
+        NewApp.contracts.Ledger = TruffleContract(LedgerArtifacts);
       
         // Set the provider for our contract
-        App.contracts.CryptoCar.setProvider(App.web3Provider);
+        NewApp.contracts.Ledger.setProvider(NewApp.web3Provider);
       
         // Use our contract to retrieve and mark the adopted pets
-        return App.loadCar();
+        return NewApp.loadCar();
       });
   
-      return App.bindEvents();
+      return NewApp.bindEvents();
     },
   
     bindEvents: function() {
-      $(document).on('click', '.btn-buy', App.handleAdopt);
+      $(document).on('click', '.btn-buy', NewApp.handleAdopt);
     },
   
     loadCar: function() {
       
-      var cryptoCarInstance;
+      var ledgerInstance;
   
-      App.contracts.CryptoCar.deployed().then(function(instance) {
-        cryptoCarInstance = instance;
-  
-        return cryptoCarInstance.getCarList();
+      NewApp.contracts.Ledger.deployed().then(function(instance) {
+        ledgerInstance = instance;
+
+        web3.eth.getAccounts(function(error, accounts) {
+          if (error) {
+            console.log(error);
+          }
+          console.log(accounts); 
+           
+        }
+        
+        )
+      
+        return ledgerInstance.getCarsbyOwner();
       }).then(function(data) {
+
+        console.log(data); 
         
           carsLoaded = data; 
           var autoRow = $('#autoRow');
@@ -98,7 +110,7 @@ App = {
             modalTemplate.find('.modal')[0].id=data[i].tokenId;            
             modalTemplate.find('.model-modal').text(data[i].model); 
             console.log(modalTemplate.find('.model-modal'));
-            modalTemplate.find('.staging-modal').text(data[i].staging); 
+            modalTemplate.find('.staging-modal').text(data[i].model); 
             modalTemplate.find('.optional-modal').text(data[i].optionals); 
             modalTemplate.find('.motor-modal').text(data[i].motor); 
             modalTemplate.find('.price-modal').text(data[i].price);
@@ -108,17 +120,17 @@ App = {
           
           
           }
-        
+        /*
         /*
         
         for (i = 0; i < adopters.length; i++) {
           if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
             $('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
           }
-        }
+        }*/
       }).catch(function(err) {
         console.log(err.message);
-      */
+      
       });
       
   
@@ -138,8 +150,9 @@ App = {
       }
   
       var account = accounts[0];
+      
   
-      App.contracts.CryptoCar.deployed().then(function(instance) {
+      NewApp.contracts.CryptoCar.deployed().then(function(instance) {
         cryptoInstance = instance;
   
         // Execute adopt as a transaction by sending account
@@ -160,6 +173,6 @@ App = {
   
   $(function() {
     $(window).load(function() {
-      App.init();
+      NewApp.init();
     });
   });

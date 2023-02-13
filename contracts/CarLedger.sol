@@ -13,7 +13,6 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
     
     bytes32 public constant DEALER_ROLE = keccak256("DEALER_ROLE");
     bytes32 public constant SERVICE_ROLE = keccak256("SERVICE_ROLE");
-
     
     struct Service {
         uint date;
@@ -35,11 +34,13 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         string vin; 
         string plate;
         string optionals; 
-        string url_info; 
+        string url_info;
+        string picture;  
         bool isSet; 
     }
 
     mapping( uint256 => Info ) private ledger; 
+    mapping(address => uint256[] ) private ownersList; 
 
 
     constructor() ERC721("CarLedger", "CLed") {
@@ -59,10 +60,6 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         grantRole(SERVICE_ROLE, serv);
     }
 
-    function addAdmin(address admin) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        grantRole(DEFAULT_ADMIN_ROLE, admin);
-    }
-
     function revokeDealer(address dealer) public onlyRole(DEFAULT_ADMIN_ROLE) {
         revokeRole(DEALER_ROLE, dealer);
     }
@@ -72,17 +69,10 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         revokeRole(SERVICE_ROLE, serv);
     }
 
-    function revokeAdmin(address admin) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        revokeRole(DEFAULT_ADMIN_ROLE, admin);
-
-    }
-
-
-
-    function createCar(address to ,string memory _name,string memory _age_production, string memory _model,string memory _staging, string memory _motor, string memory _power, string memory _url_info, string memory _optionals  ) public onlyRole(DEALER_ROLE) returns (uint256) {
+    function createCar(address to ,string memory _name,string memory _age_production, string memory _model,string memory _staging, string memory _motor, string memory _power, string memory _url_info, string memory _optionals, string memory picture  ) public onlyRole(DEALER_ROLE) returns (uint256) {
 
         uint256 tokenId = _tokenIdCounter.current(); 
-        _tokenIdCounter.increment();
+        
         _safeMint(to, tokenId);
         ledger[tokenId].power = _power;
         ledger[tokenId].motor = _motor;
@@ -96,13 +86,15 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         ledger[tokenId].url_info = _url_info;
         ledger[tokenId].optionals = _optionals;
         ledger[tokenId].services.push(Service(block.timestamp , 0 , "", "Car created" ));
+        ledger[tokenId].picture = picture;
+        ownersList[to].push(tokenId); 
+        _tokenIdCounter.increment();
         return tokenId; 
     }
 
-    function addService(address client, uint256 tokenId, uint32 _km, string memory _operation, string memory _office) public onlyRole(SERVICE_ROLE)  {
+    function addService( uint256 tokenId, uint32 _km, string memory _operation, string memory _office) public onlyRole(SERVICE_ROLE)  {
 
         require(ledger[tokenId].isSet == true , "Veichle doesen't exists");
-        require(ownerOf(tokenId) == client , "Error the client is not the owner of the veichle");
         ledger[tokenId].services.push(Service(block.timestamp, _km, _operation, _office ));
         
 
@@ -115,30 +107,41 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         override(ERC721, ERC721Enumerable)
     {
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
-        ledger[tokenId].history.push(to); 
+        removeTokenIdList(tokenId, from);
+        ownersList[to].push(tokenId); 
+        ledger[tokenId].history.push(to);
+         
     }
 
-    
 
-    function getHistory(uint256 tokenId) public view returns ( address[] memory ){
-
-        require( ledger[tokenId].isSet == true , "The car doesen't exists");
-        return ledger[tokenId].history; 
-
-    }
-
-    function getServices(uint256 tokenId) public view returns ( Service[] memory ){
-
-        require( ledger[tokenId].isSet == true , "The car doesen't exists");
-        return ledger[tokenId].services; 
-
-    }
-
-    function getInfo(uint256 tokenId) public view returns ( Info memory ){
+    function getInfoCar(uint256 tokenId) public view returns ( Info memory ){
 
         require( ledger[tokenId].isSet == true , "The car doesen't exists");
         return ledger[tokenId]; 
 
+    }
+    
+    function getCarsbyOwner() public view returns (Info[] memory){
+        
+        uint256[] memory owners = ownersList[msg.sender];
+        
+        Info[] memory cars = new Info[](owners.length);
+    
+        for (uint i = 0; i < owners.length; i++) {
+            cars[i] = getInfoCar(owners[i]); 
+        }
+
+        return cars; 
+    }
+
+    function removeTokenIdList(uint256 tokenId , address from) internal {
+        
+        for (uint i = 0; i < ownersList[from].length; i++) {
+            if (ownersList[from][i] == tokenId) {
+                delete ownersList[from][i];
+                return;
+            }
+        }
     }
 
     function supportsInterface(bytes4 interfaceId)

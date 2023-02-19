@@ -66,74 +66,69 @@ NewApp = {
   
       NewApp.contracts.Ledger.deployed().then(function(instance) {
         ledgerInstance = instance;
-
+        
         web3.eth.getAccounts(function(error, accounts) {
           if (error) {
             console.log(error);
           }
-          console.log(accounts); 
-           
-        }
-        
-        )
       
-        return ledgerInstance.getCarsbyOwner();
-      }).then(function(data) {
-
-        console.log(data); 
+          var account = accounts[0];
+      
+          NewApp.contracts.Ledger.deployed().then(function(instance) {
+            ledgerInstance = instance;
+      
+            // Execute adopt as a transaction by sending account
+            return ledgerInstance.getCarsbyOwner({from:account});
+          
+          }).then(function(result) {
+            
+            console.log(result); 
         
-          carsLoaded = data; 
-          var autoRow = $('#autoRow');
-          var autoTemplate = $('#autoTemplate');
-
-          var modalTemplate = $('#modal'); 
-          var autoModal = $('.container'); 
+            carsLoaded = result; 
+            var autoRow = $('#autoRow');
+            var autoTemplate = $('#autoTemplate');
+            var modalTemplate = $('#modal'); 
+            var autoModal = $('.container'); 
+    
+            for (i = 0; i < carsLoaded.length; i ++) {
+              
+            
+              autoTemplate.find('.panel-title').text(carsLoaded[i].name);
+              autoTemplate.find('img').attr('src', carsLoaded[i].picture);
+              autoTemplate.find('.auto-age').text(carsLoaded[i].age_production);
+              autoTemplate.find('.auto-model').text(carsLoaded[i].model);
+              autoTemplate.find('.auto-price').text(carsLoaded[i].price);
+              autoTemplate.find('.auto-mot').text(carsLoaded[i].motor);
+              autoTemplate.find('.btn-buy').attr('data-id', carsLoaded[i].tokenId);
+              if(carsLoaded[i].isSold == true) 
+                autoTemplate.find('.btn-buy').attr('disabled', 'disabled');
+              else
+                autoTemplate.find('.btn-buy').removeAttr("disabled");
+              autoTemplate.find('.btn-primary').attr('data-target',"#"+carsLoaded[i].tokenId); 
+        
+              autoRow.append(autoTemplate.html());
+              
+              modalTemplate.find('.modal')[0].id=carsLoaded[i].tokenId;            
+              modalTemplate.find('.model-modal').text(carsLoaded[i].model); 
+              console.log(modalTemplate.find('.model-modal'));
+              modalTemplate.find('.staging-modal').text(carsLoaded[i].staging); 
+              modalTemplate.find('.optional-modal').text(carsLoaded[i].optionals); 
+              modalTemplate.find('.motor-modal').text(carsLoaded[i].motor); 
+              modalTemplate.find('div.modal').attr("id",carsLoaded[i].id);  
+              autoModal.append(modalTemplate.html());
   
-          for (i = 0; i < data.length; i ++) {
             
-            console.log(data[i]); 
-            autoTemplate.find('.panel-title').text(data[i].name);
-            autoTemplate.find('img').attr('src', data[i].picture);
-            autoTemplate.find('.auto-age').text(data[i].age_production);
-            autoTemplate.find('.auto-model').text(data[i].model);
-            autoTemplate.find('.auto-price').text(data[i].price);
-            autoTemplate.find('.auto-mot').text(data[i].motor);
-            autoTemplate.find('.btn-buy').attr('data-id', data[i].tokenId);
-            if(data[i].isSold == true) 
-              autoTemplate.find('.btn-buy').attr('disabled', 'disabled');
-            else
-              autoTemplate.find('.btn-buy').removeAttr("disabled");
-            autoTemplate.find('.btn-primary').attr('data-target',"#"+data[i].tokenId); 
-      
-            autoRow.append(autoTemplate.html());
             
-            modalTemplate.find('.modal')[0].id=data[i].tokenId;            
-            modalTemplate.find('.model-modal').text(data[i].model); 
-            console.log(modalTemplate.find('.model-modal'));
-            modalTemplate.find('.staging-modal').text(data[i].model); 
-            modalTemplate.find('.optional-modal').text(data[i].optionals); 
-            modalTemplate.find('.motor-modal').text(data[i].motor); 
-            modalTemplate.find('.price-modal').text(data[i].price);
-            modalTemplate.find('div.modal').attr("id",data[i].id);  
-            autoModal.append(modalTemplate.html());
+            }  
 
-          
-          
-          }
-        /*
-        /*
+          }).catch(function(err) {
+            console.log(err.message);
+          });
+        });
         
-        for (i = 0; i < adopters.length; i++) {
-          if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
-            $('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
-          }
-        }*/
-      }).catch(function(err) {
-        console.log(err.message);
-      
+        
+        
       });
-      
-  
     },
   
     handleAdopt: function(event) {

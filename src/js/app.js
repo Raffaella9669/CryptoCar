@@ -143,7 +143,7 @@ App = {
         cryptoInstance = instance;
   
         // Execute adopt as a transaction by sending account
-        return cryptoInstance.buyCar(carId, {from: account, value: carsLoaded[carId].price });
+        return cryptoInstance.buyCar(carId, {from: account, value: web3.utils.toWei(carsLoaded[carId].price, 'ether')});
       }).then(function(result) {
         let tokenBuyed = result.receipt.logs[0].args[1]
         alert("Complimenti hai acquistato -> "+tokenBuyed); 

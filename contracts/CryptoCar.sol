@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 
 interface ICarLedger {
@@ -21,6 +22,7 @@ interface ICarLedger {
 
 contract CryptoCar is AccessControl, ReentrancyGuard {
 	 using Counters for Counters.Counter; 
+	 using SafeMath for uint256;
 
     Counters.Counter private _tokenIdCounter;
 
@@ -121,7 +123,7 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
 
 		require(list[idCar].isSet == true , "The car doesn't exists");
 		require(list[idCar].isSold == false ,"Already sold");
-		require(msg.value == list[idCar].price , "Insufficient or not correct funds" ); 
+		require(convertWeiToEthSafe( msg.value )  == list[idCar].price , "Insufficient or not correct funds" ); 
 		try carLedger.createCar(msg.sender,list[idCar].name,list[idCar].age_production, list[idCar].model, list[idCar].staging, list[idCar].motor,list[idCar].power, list[idCar].url_info, list[idCar].optionals, list[idCar].picture ) returns(uint256 carId)
 		{
 			list[idCar].isSold = true;
@@ -144,6 +146,11 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
 		emit Log( string(abi.encodePacked("Withdrow happen : ", balance)) );
 
 	}
+
+	function convertWeiToEthSafe(uint256 weiAmount) internal pure returns (uint256) {
+        uint256 ethAmount = weiAmount.div(10**18); // divisione per 10^18
+        return ethAmount;
+    }
 
 	receive() external payable{
 

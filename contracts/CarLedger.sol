@@ -9,6 +9,10 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
     using Counters for Counters.Counter; 
 
+    event LogLedger(string info, address sito, uint256[] tokens); 
+    event LogCars(uint256[] owners, address from );
+    event LogInfo(Info[] info);
+
     Counters.Counter private _tokenIdCounter;
     
     bytes32 public constant DEALER_ROLE = keccak256("DEALER_ROLE");
@@ -87,7 +91,6 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         ledger[tokenId].optionals = _optionals;
         ledger[tokenId].services.push(Service(block.timestamp , 0 , "", "Car created" ));
         ledger[tokenId].picture = picture;
-        ownersList[to].push(tokenId); 
         _tokenIdCounter.increment();
         return tokenId; 
     }
@@ -130,7 +133,7 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         for (uint i = 0; i < owners.length; i++) {
             cars[i] = getInfoCar(owners[i]); 
         }
-
+  
         return cars; 
     }
 
@@ -138,8 +141,8 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         
         for (uint i = 0; i < ownersList[from].length; i++) {
             if (ownersList[from][i] == tokenId) {
-                delete ownersList[from][i];
-                return;
+                ownersList[from][i] = ownersList[from][ownersList[from].length-1];
+                ownersList[from].pop(); 
             }
         }
     }

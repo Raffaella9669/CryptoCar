@@ -98,26 +98,51 @@ NewApp = {
               autoTemplate.find('.auto-age').text(carsLoaded[i].age_production);
               autoTemplate.find('.auto-model').text(carsLoaded[i].model);
               autoTemplate.find('.auto-price').text(carsLoaded[i].price);
-              autoTemplate.find('.auto-mot').text(carsLoaded[i].motor);
+              autoTemplate.find('.auto-mot').text(carsLoaded[i].motor+" "+carsLoaded[i].power+" kw");
               autoTemplate.find('.btn-buy').attr('data-id', carsLoaded[i].tokenId);
+              
               if(carsLoaded[i].isSold == true) 
                 autoTemplate.find('.btn-buy').attr('disabled', 'disabled');
               else
                 autoTemplate.find('.btn-buy').removeAttr("disabled");
-              autoTemplate.find('.btn-primary').attr('data-target',"#"+carsLoaded[i].tokenId); 
+              
+              autoTemplate.find('.btn-primary').attr('data-target',"#"+carsLoaded[i].vin); 
         
               autoRow.append(autoTemplate.html());
               
-              modalTemplate.find('.modal')[0].id=carsLoaded[i].tokenId;            
+              modalTemplate.find('.modal')[0].id=carsLoaded[i].vin;            
               modalTemplate.find('.model-modal').text(carsLoaded[i].model); 
-              console.log(modalTemplate.find('.model-modal'));
               modalTemplate.find('.staging-modal').text(carsLoaded[i].staging); 
               modalTemplate.find('.optional-modal').text(carsLoaded[i].optionals); 
               modalTemplate.find('.motor-modal').text(carsLoaded[i].motor); 
-              modalTemplate.find('div.modal').attr("id",carsLoaded[i].id);  
+              modalTemplate.find('div.modal').attr("id",carsLoaded[i].vin);
+                            
               autoModal.append(modalTemplate.html());
   
-            
+              let serviceInfo = $("#"+carsLoaded[i].vin).find('.service-info');
+              let serviceDate = $("#"+carsLoaded[i].vin).find('.service-date');
+              let serviceKm = $("#"+carsLoaded[i].vin).find('.service-km');
+              let serviceBody = $("#"+carsLoaded[i].vin).find('.body-service');
+              
+              for(j = 1; j < carsLoaded[i].services.length ; j++){
+                let date =  new Date(carsLoaded[i].services[j].date *1000); 
+                let stringDate = date.getDate() +"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+                
+                serviceInfo.text(carsLoaded[i].services[j].office +" "+carsLoaded[i].services[j].operation);
+                serviceDate.text(stringDate); 
+                serviceKm.text(carsLoaded[i].services[j].km);
+                serviceBody.append(serviceBody.html()); 
+
+              }
+              
+              let historyInfo = $("#"+carsLoaded[i].vin).find('.history-info');
+              let historyBody = $("#"+carsLoaded[i].vin).find('.body-history');
+              for(j = 0; j < carsLoaded[i].history.length ; j++){
+                
+                historyInfo.text(carsLoaded[i].history[j]);
+                if( j != 0) historyBody.append(historyBody.html()); 
+
+              }
             
             }  
 

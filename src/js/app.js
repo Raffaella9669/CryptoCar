@@ -30,7 +30,8 @@ App = {
       }
       // If no injected web3 instance is detected, fall back to Ganache
       else {
-        App.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
+        alert("Installa una gestore di wallet"); 
+        return
       }
       
       web3 = new Web3(App.web3Provider);
@@ -41,7 +42,7 @@ App = {
   
     initContract: function() {
       
-      $.getJSON('CryptoCar.json', function(data) {
+      $.getJSON('abi/CryptoCar.json', function(data) {
         // Get the necessary contract artifact file and instantiate it with @truffle/contract
         var CryptoCarArtifacts = data;
         App.contracts.CryptoCar = TruffleContract(CryptoCarArtifacts);
@@ -57,7 +58,7 @@ App = {
     },
   
     bindEvents: function() {
-      $(document).on('click', '.btn-buy', App.handleAdopt);
+      $(document).on('click', '.btn-buy', App.buy);
     },
   
     loadCar: function() {
@@ -84,7 +85,7 @@ App = {
             autoTemplate.find('img').attr('src', data[i].picture);
             autoTemplate.find('.auto-age').text(data[i].age_production);
             autoTemplate.find('.auto-model').text(data[i].model);
-            autoTemplate.find('.auto-price').text(data[i].price);
+            autoTemplate.find('.auto-price').text(data[i].price+" ETH");
             autoTemplate.find('.auto-mot').text(data[i].motor);
             autoTemplate.find('.btn-buy').attr('data-id', data[i].tokenId);
             if(data[i].isSold == true) 
@@ -102,29 +103,20 @@ App = {
             modalTemplate.find('.optional-modal').text(data[i].optionals); 
             modalTemplate.find('.motor-modal').text(data[i].motor); 
             modalTemplate.find('.price-modal').text(data[i].price);
-            modalTemplate.find('div.modal').attr("id",data[i].id);  
+            modalTemplate.find('div.modal').attr("id",data[i].id);
+            modalTemplate.find('.link').attr("href",data[i].url_info);  
+            modalTemplate.find('img').attr("src",data[i].picture);
             autoModal.append(modalTemplate.html());
 
           
           
           }
-        
-        /*
-        
-        for (i = 0; i < adopters.length; i++) {
-          if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
-            $('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
-          }
-        }
-      }).catch(function(err) {
-        console.log(err.message);
-      */
       });
       
   
     },
   
-    handleAdopt: function(event) {
+    buy: function(event) {
       event.preventDefault();
       
       var carId = parseInt($(event.target).data('id'));
@@ -146,11 +138,16 @@ App = {
         return cryptoInstance.buyCar(carId, {from: account, value: web3.utils.toWei(carsLoaded[carId].price, 'ether')});
       }).then(function(result) {
         let tokenBuyed = result.receipt.logs[0].args[1]
-        alert("Complimenti hai acquistato -> "+tokenBuyed); 
+        let modal = $("#message"); 
+        modal.find(".modal-body").html("Complimenti Per L'acquisto,Il token è:<br><h2>"+tokenBuyed+"</h2>"); 
         $(event.target).attr('disabled', 'disabled');
+        modal.modal('show'); 
         return console.log(tokenBuyed);
       }).catch(function(err) {
-        console.log(err.message);
+        let modal = $("#message");
+        console.log(err);  
+        modal.find(".modal-body").text("Errore nell'acquisto potresti non avere sufficienti fondi"); 
+        modal.modal('show');
       });
     });
   

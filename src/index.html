@@ -67,7 +67,7 @@
         </div>
       </div>
       <div id="autoRow" class="row">
-        <!-- PETS LOAD HERE -->
+        <!-- AUTO LOAD HERE -->
       </div>
     </div>
     <div id="autoTemplate" style="display: none;">
@@ -99,8 +99,8 @@
        
       </div>
       <div class="modal-body">
-        <div class="pet-picture">
-          <img id="pet- picture" src="" alt="">
+        <div class="car-picture">
+          <img class="img-rounded img-center" src="" style="width: 230px;height: 130px;" alt="">
         </div>
         <table class="table table-bordered">
           <tbody>
@@ -126,17 +126,62 @@
             </tr>
           </tbody>
         </table>
+        <a href="" class="link" target="_blank"><button class="btn btn-info">Mostra altre info</button></a>
       </div>
     </div>
   </div>
 </div>
 </div>
+
+
+
+<div class="modal"  id="message">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Intestazione del modal -->
+      <div class="modal-header">
+        <h4 class="modal-title">Info</h4>
+      </div>
+      <!-- Contenuto del modal -->
+      <div class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
+
+  
     <footer class="py-5 bg-light">
     </footer> 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
+
+    <script>
+      /*$(document).ready(function() {
+        $.getJSON('pets.json', function(data){
+        {
+            $(".btn").click(function() {
+              var id = $(this).attr("data-id");
+              console.log(id);
+              var pet = data[id];
+
+              if (pet){
+              $("#petModalLabel").text(pet.name);
+              $("#pet-picture").attr("src", pet.picture);
+              $("#pet-modello").text(pet.modello);
+              $("#pet-allestimento").text(pet.allestimento);
+              $("#pet-optional").text(pet.optional);
+              $("#pet-motorizzazione").text(pet.motorizzazione);
+              $("#pet-prezzo").text(pet.prezzo);
+              }
+              $("#petModal").modal("show");
+    });
+    }
+    });
+    });*/
+    </script>
+  
     <script>
       /*$(document).ready(function() {
         $.getJSON('pets.json', function(data){

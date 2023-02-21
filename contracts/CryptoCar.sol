@@ -77,7 +77,7 @@ contract CryptoCar is AccessControl, ReentrancyGuard {
 		
 		}catch 
 		{
-			return false;
+			revert();
 		} 
 	}
 

@@ -26,6 +26,11 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
 
     }
 
+    struct History {
+        address adr;
+        uint date; 
+    }
+
     struct Info {
         string name; 
         string age_production; 
@@ -34,12 +39,11 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
 		string motor;
 		string power;  
         Service[] services; 
-        address[] history;
-        string vin; 
-        string plate;
+        History[] history;
         string optionals; 
         string url_info;
-        string picture;  
+        string picture;
+        uint256 nftID;
         bool isSet; 
     }
 
@@ -83,14 +87,13 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         ledger[tokenId].staging = _staging;  
         ledger[tokenId].age_production = _age_production; 
         ledger[tokenId].name = _name; 
-        ledger[tokenId].vin = Strings.toString(block.timestamp%19);
-        ledger[tokenId].plate = Strings.toString((block.timestamp+200)%8); 
         ledger[tokenId].model = _model; 
         ledger[tokenId].isSet = true;
         ledger[tokenId].url_info = _url_info;
         ledger[tokenId].optionals = _optionals;
         ledger[tokenId].services.push(Service(block.timestamp , 0 , "", "Car created" ));
         ledger[tokenId].picture = picture;
+        ledger[tokenId].nftID = tokenId; 
         _tokenIdCounter.increment();
         return tokenId; 
     }
@@ -112,7 +115,7 @@ contract CarLedger is ERC721, ERC721Enumerable, AccessControl {
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
         removeTokenIdList(tokenId, from);
         ownersList[to].push(tokenId); 
-        ledger[tokenId].history.push(to);
+        ledger[tokenId].history.push(History(to,block.timestamp));
          
     }
 

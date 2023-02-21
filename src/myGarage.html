@@ -42,8 +42,25 @@
         </div>
       </div>
       <div id="autoRow" class="row">
-        <!-- PETS LOAD HERE -->
+        <!-- AUTO LOAD HERE -->
       </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-push-2">
+          <h1 class="text-center">Controllo NFT</h1>
+          <hr/>
+          <br/>
+        </div>
+      </div>
+      <div class="row">
+        <form>
+          <div class="mb-3">
+            <label for="nftCheck" class="col-form-label">ID NFT::</label>
+            <input type="text" class="form-control" id="nftCheck">
+          </div>
+          <button type="button" class="btn btn-primary" onclick="NewApp.check()">Controlla</button>
+        </form>
+      </div>
+      <span class="badge rounded-pill bg-danger" id="responseCheck"></span>
     </div>
     <div id="autoTemplate" style="display: none;">
       <div class="col-sm-6 col-md-4 col-lg-3">
@@ -55,10 +72,10 @@
             <img alt="100x100" data-src="holder.js/100x100" class="img-rounded img-center" style="width: 230px;height: 130px;" src="https://immagini.alvolante.it/sites/default/files/styles/anteprima_lunghezza_640_jpg/public/serie_auto_galleria/2010/02/fiat_500_sport_ant.png?itok=JqBNdsn6" data-holder-rendered="true">
             <strong>Anno Produzione</strong>: <span class="auto-age">2022</span><br/>
             <strong>Modello</strong>: <span class="auto-model">500</span><br/>
-            <strong>Prezzo</strong>: <span class="auto-price">12ETH</span><br/>
+            <strong>NFT ID</strong>: <span class="NFT-ID"></span><br/>
             <strong>Motore</strong>: <span class="auto-mot">1.0 Hybrid Benzina</span><br/><br/>
-            <button class="btn btn-default btn-buy" type="button" data-id="0">Compra</button>   
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#petModal" data-id="0">Scheda Tecnica</button>
+            <button class="btn btn-default btn-transfer" type="button" nft-id="" onclick='NewApp.loadModal(event)'>Trasferisci proprietà</button>   
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="" data-id="">Info Veicolo</button>
 
           </div>
         </div>
@@ -74,10 +91,10 @@
        
       </div>
       <div class="modal-body">
-        <div class="pet-picture">
-          <img id="pet- picture" src="" alt="">
+        <div class="car-picture">
+          <img class="img-rounded img-center" src="" style="width: 230px;height: 130px;" alt="">
         </div>
-        <p>Scheda Veicolo</p>
+        <p>Info Veicolo</p>
         <table class="table table-bordered">
           <tbody>
             <tr>
@@ -106,26 +123,114 @@
             <td>info</td>
           </thead>
           <tbody class="body-service">
-            <tr class="service-record">
-              <td class="service-date"></td>
-              <td class="service-km"></td>
-              <td class="service-info"></td>
-            </tr>
           </tbody>
         </table>
         Storico Proprietari 
         <table class="table table-bordered">
-          <tbody class="body-history">
-            <tr class="history-record">
-              <td>Indirizzo</td>
-              <td class="history-info"></td>
+          <thead>
+            <tr>
+              <td>Data</td>
+              <td>Wallet</td>
             </tr>
+          </thead>
+          <tbody class="body-history">
           </tbody>
         </table>
+        <a href="" class="link" target="_blank"><button class="btn btn-info">Mostra altre info</button></a>
       </div>
     </div>
   </div>
 </div>
+</div>
+<div class="modal" tabindex="-1"  id="checkResponse">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Trasferisci proprietà</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="car-picture">
+          <img class="img-rounded img-center" src="" style="width: 230px;height: 130px;" alt="">
+        </div>
+        <p>Info Veicolo</p>
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <td>Modello</td>
+              <td class="model-modal"></td>
+            </tr>
+            <tr>
+              <td>Allestimento</td>
+              <td class="staging-modal"></td>
+            </tr>
+            <tr>
+              <td>Optional</td>
+              <td class="optional-modal"></td>
+            </tr>
+            <tr>
+              <td>Motorizzazione</td>
+              <td class="motor-modal"></td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Tagliandi</p>
+        <table class="table table-bordered">
+          <thead>
+            <td>data</td>
+            <td>km</td>
+            <td>info</td>
+          </thead>
+          <tbody class="body-service">
+          </tbody>
+        </table>
+        Storico Proprietari 
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <td>Data</td>
+              <td>Wallet</td>
+            </tr>
+          </thead>
+          <tbody class="body-history">
+          </tbody>
+        </table>
+        <a href="" class="link" target="_blank"><button class="btn btn-info">Mostra altre info</button></a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal" id="transferPropModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Trasferisci proprietà</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="nftId" class="col-form-label">ID NFT::</label>
+            <input type="text" disabled="disabled" class="form-control" id="nftId">
+          </div>
+          <div class="mb-3">
+            <label for="addressModal" class="col-form-label">Indirizzo destinatario:</label>
+            <textarea class="form-control" id="addressModal"></textarea>
+          </div>
+        </form>
+        <span class="badge rounded-pill bg-success" id="responseTransfer"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+        <button type="button" class="btn btn-primary" onclick="NewApp.transfer()">Trasferisci</button>
+      </div>
+    </div>
+  </div>
 </div>
 <footer class="footer">
   <div class="container">

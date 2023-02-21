@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Modal Bootstrap</title>
+	<!-- Includi i file CSS di Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<!-- Includi jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- Includi il file JS di Bootstrap -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<h2>Modal Bootstrap con jQuery</h2>
+		<!-- Bottone per mostrare il modal -->
+		<button type="button" class="btn btn-primary" id="myButton">Mostra Modal</button>
+		<!-- Modal -->
+		<div class="modal" id="myModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<!-- Intestazione del modal -->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Titolo del Modal</h4>
+					</div>
+					<!-- Contenuto del modal -->
+					<div class="modal-body">
+						<p>Contenuto del Modal.</p>
+					</div>
+					<!-- Piede del modal -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){
+			$("#myButton").click(function(){
+				$("#myModal").modal('show');
+			});
+		});
+	</script>
+</body>
+</html>

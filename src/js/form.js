@@ -3,7 +3,6 @@ App = {
     web3Provider: null,
     contracts: {},
     
-  
     init: async function() {
   
       return await App.initWeb3();
@@ -29,7 +28,8 @@ App = {
       }
       // If no injected web3 instance is detected, fall back to Ganache
       else {
-        App.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
+        alert("Installa un gestore di wallet"); 
+        return
       }
       
       web3 = new Web3(App.web3Provider);
@@ -88,7 +88,7 @@ App = {
   
     bindEvents: function() {
       $(document).on('click', '.btn-service', App.addService);
-      $(document).on('click', '.btn-withdraw', App.withdraw);
+      $(document).on('click', '#btn-withdraw', App.withdraw);
     },
   
   
@@ -109,15 +109,14 @@ App = {
               $('#responseCheck').toggleClass('bg-success');
               $('#responseCheck').removeClass('bg-danger');
               $("#responseCheck").text("Inserimento effettuato con successo");
-            })
+            }).catch(error => {
+              console.log(error); 
+              $('#responseCheck').toggleClass('bg-danger');
+              $('#responseCheck').removeClass('bg-success');
+              $("#responseCheck").text("Errore durante l'inserimento");
+            });
           })
-          .catch(error => {
-            console.error(error); 
-            $('#responseCheck').toggleClass('bg-danger');
-            $('#responseCheck').removeClass('bg-success');
-            $("#responseCheck").text("Errore durante l'inserimento");
-          });
-       
+          
 
       })
   

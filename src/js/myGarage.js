@@ -29,7 +29,8 @@ NewApp = {
       }
       // If no injected web3 instance is detected, fall back to Ganache
       else {
-        NewApp.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
+        alert("Installa un gestore di wallet"); 
+        return
       }
       
       web3 = new Web3(NewApp.web3Provider);

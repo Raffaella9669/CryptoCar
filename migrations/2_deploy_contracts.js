@@ -9,7 +9,7 @@ module.exports = async function(deployer, network , accounts) {
 
 	//deployer.deploy(Car);
 	let account = accounts[0]
-	console.log("Using this as admin of both"+ account); 
+	console.info("Using this as admin of both :"+ account); 
 	deployer.deploy( Ledger,{from: account}).then(function() {
 		
 		console.log("Contract Ledger Deployed : " +  Ledger.address); 
@@ -17,7 +17,7 @@ module.exports = async function(deployer, network , accounts) {
 	  
 	}).then(async function(){
 		
-		console.log("admin account : "+account); 
+		console.info("admin account : "+account); 
 		let instanceLedger =await Ledger.deployed(); 
 		
 		instanceLedger.addDealer(Vendor.address, {from: account}); 
@@ -31,14 +31,13 @@ module.exports = async function(deployer, network , accounts) {
 
 	}).then(async function(){
 		
-		console.log("proviamo inserimento : "+ carsData); 
+		console.log("insert cars..."); 
 
 		
 		let instanceVendor =await Vendor.deployed();   
 
 		await carsData.forEach( element => {
             
-            console.log(element.modello + "  ");
             let a = instanceVendor.addCar(element.modello, element.name, element.picture, element.age_production, element.allestimento, element.motorizzazione, element.kw, element.optional, element.url, parseInt(element.prezzo) ,{from: accounts[0]});    
         });
 		

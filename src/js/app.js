@@ -30,7 +30,7 @@ App = {
       }
       // If no injected web3 instance is detected, fall back to Ganache
       else {
-        alert("Installa una gestore di wallet"); 
+        alert("Installa un gestore di wallet"); 
         return
       }
       
@@ -88,10 +88,15 @@ App = {
             autoTemplate.find('.auto-price').text(data[i].price+" ETH");
             autoTemplate.find('.auto-mot').text(data[i].motor);
             autoTemplate.find('.btn-buy').attr('data-id', data[i].tokenId);
-            if(data[i].isSold == true) 
+            
+            if(data[i].isSold == true) {
               autoTemplate.find('.btn-buy').attr('disabled', 'disabled');
-            else
+              autoTemplate.find('.btn-buy').text("venduto");
+            }
+            else{
               autoTemplate.find('.btn-buy').removeAttr("disabled");
+              autoTemplate.find('.btn-buy').text("Compra");
+            }
             autoTemplate.find('.btn-primary').attr('data-target',"#"+data[i].tokenId); 
       
             autoRow.append(autoTemplate.html());
@@ -122,8 +127,7 @@ App = {
       var carId = parseInt($(event.target).data('id'));
   
       var cryptoInstance;
-      alert("hai premuto "+carId+" price "+carsLoaded[carId].price); 
-      
+
       web3.eth.getAccounts(function(error, accounts) {
       if (error) {
         console.log(error);
@@ -141,6 +145,7 @@ App = {
         let modal = $("#message"); 
         modal.find(".modal-body").html("Complimenti Per L'acquisto,Il token è:<br><h2>"+tokenBuyed+"</h2>"); 
         $(event.target).attr('disabled', 'disabled');
+        $(event.target).text("Non disponibile");
         modal.modal('show'); 
         return console.log(tokenBuyed);
       }).catch(function(err) {

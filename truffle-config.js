@@ -8,12 +8,12 @@ module.exports = {
   networks: {
     development: {
       network_id: "*",
-      port: 8545,
+      port: 7545,
       host: "127.0.0.1"
     },
     loc_caar_caar: {
       network_id: "*",
-      port: 8545,
+      port: 7545,
       host: "127.0.0.1"
     }
   }
